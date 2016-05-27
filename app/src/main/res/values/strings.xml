@@ -1,0 +1,52 @@
+<resources>
+
+
+
+    <!-- Strings that will be used in fragment_expense_list -->
+    <string name="empty_expense_listView_text">There are currently no expenses to display.</string>
+    <string name="empty_expense_listView_newExpenseButton">Add an expense</string>
+
+    <!--Strings that will be used in fragment income list -->
+    <string name="empty_income_listView_text">There are currently no incomes to display.</string>
+    <string name="empty_income_listView_newIncomeButton">Add an income</string>
+
+    <!--String that will be used in fragment_expense -->
+    <string name="expense_title_label">Title:</string>
+    <string name="expense_amount_label">Cost:</string>
+    <string name="expense_edit_amount_label">Cost: $</string>
+    <string name="expense_amount_percent">% of Monthly Income:</string>
+    <string name="expense_frequency_label">Paid:</string>
+    <string name="expense_pay_date_label">Next Pay Date:</string>
+
+    <!--Strings that will be used in fragment_income-->
+    <string name="income_title_label">Title:</string>
+    <string name="income_amount_label">Income:</string>
+    <string name="income_frequency_label">Collected:</string>
+    <string name="income_collection_date_label">Next Collection:</string>
+    <string name="income_collect_date_label">Next Income:</string>
+
+    <!--Strings that will be using in fragment_menu-->
+    <string name="menu_view_expenses_button">View Expenses</string>
+    <string name="menu_view_incomes_button">View Incomes</string>
+
+    <!--Strings that will be used in the list item Views-->
+    <string name="list_item_edit_button">Edit</string>
+    <string name="list_item_addIncome_button">Add Income</string>
+    <string name="list_item_addExpense_button">Add Expense</string>
+    <string name="edit_expense">Edit Expense</string>
+    <string name="delete_expense">Delete Expense</string>
+
+    <!-- Strings that will be used in the Monthly Report Fragment -->
+    <string name="fragment_report_total_income_label">Total Income:</string>
+    <string name="fragment_report_total_expense_label">Total Expense:</string>
+    <string name="fragment_report_total_savings_label">Savings:</string>
+
+    <!--Strings that will be used in DateDialog-->
+    <string name="date_dialog_label">Pick a date:</string>
+
+    <!--General Strings used in App-->
+    <string name="save_button_label">Save</string>
+    <string name="cancel_button_label">Cancel</string>
+
+    <string name="app_name">Budget Tracker</string>
+</resources>
