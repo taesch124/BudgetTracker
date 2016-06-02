@@ -3,6 +3,7 @@ package com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.
 import android.util.Log;
 
 import com.projects.danieltaeschler.budgettracker.Frequency;
+import com.projects.danieltaeschler.budgettracker.utilities.DateFormatter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,8 +47,10 @@ public class Income {
         mIncomeId = UUID.fromString(json.getString(JSON_ID));
         mIncomeTitle = json.getString(JSON_TITLE);
         mIncomeAmount = Double.parseDouble(json.getString(JSON_COST));
-        mIncomeCollectionDate = new Date(json.getLong(JSON_COLLECT_DATE));
-        mIncomeFrequency = Frequency.valueOf( json.getInt(JSON_FREQUENCY) );
+        mIncomeFrequency = Frequency.valueOf(json.getInt(JSON_FREQUENCY));
+        Log.d(TAG, mIncomeTitle + " has a frequency of: " + mIncomeFrequency.toString());
+        Date currentDate = new Date(json.getLong(JSON_COLLECT_DATE));
+        mIncomeCollectionDate = getNextIncomeCollectionDate(mIncomeFrequency, currentDate);
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -89,6 +92,22 @@ public class Income {
     }
 
     public Date getIncomeCollectionDate() { return mIncomeCollectionDate; }
+
+    public Date getNextIncomeCollectionDate(Frequency frequency, Date incomeDate) {
+        Date currentDate = new Date();
+
+        Log.d(TAG, "Receiving date for: " + mIncomeTitle);
+        Log.d(TAG, "Current date: " + DateFormatter.returnSimpleDate(currentDate));
+
+        while (incomeDate.before(currentDate)) {
+            Log.d(TAG, "Tested date: " + DateFormatter.returnSimpleDate(incomeDate));
+            incomeDate = Frequency.addFrequencyToDate(frequency, incomeDate);
+        }
+
+        Log.d(TAG, "Returning date: " + DateFormatter.returnSimpleDate(incomeDate));
+
+        return incomeDate;
+    }
 
     public void setIncomeCollectionDate(Date date) { mIncomeCollectionDate = date; }
 

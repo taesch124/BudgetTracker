@@ -3,6 +3,7 @@ package com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.
 import android.util.Log;
 
 import com.projects.danieltaeschler.budgettracker.Frequency;
+import com.projects.danieltaeschler.budgettracker.utilities.DateFormatter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,8 +43,9 @@ public class Expense {
         mExpenseId = UUID.fromString(json.getString(JSON_ID));
         mExpenseTitle = json.getString(JSON_TITLE);
         mExpenseCost = Double.parseDouble(json.getString(JSON_COST));
-        mExpensePayDate = new Date(json.getLong(JSON_DATE));
         mExpenseFrequency = Frequency.valueOf(json.getInt(JSON_FREQUENCY));
+        Date currentDate = new Date(json.getLong(JSON_DATE));
+        mExpensePayDate = getNextExpensePayDate(mExpenseFrequency, currentDate);
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -90,6 +92,16 @@ public class Expense {
     }
 
     public Date getExpensePayDate() { return mExpensePayDate; }
+
+    public Date getNextExpensePayDate(Frequency frequency, Date expenseDate) {
+        Date currentDate = new Date();
+
+        while (expenseDate.before(currentDate)) {
+            expenseDate = Frequency.addFrequencyToDate(frequency, expenseDate);
+        }
+
+        return expenseDate;
+    }
 
     public void setExpensePayDate(Date date) { mExpensePayDate = date; }
 
