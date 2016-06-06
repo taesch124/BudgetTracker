@@ -3,11 +3,13 @@ package com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.
 import android.util.Log;
 
 import com.projects.danieltaeschler.budgettracker.Frequency;
+import com.projects.danieltaeschler.budgettracker.utilities.DateAmountPair;
 import com.projects.danieltaeschler.budgettracker.utilities.DateFormatter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
@@ -85,7 +87,24 @@ public class Income {
 
     public Double getMonthlyIncomeAmount() { return (mIncomeFrequency.getYearlyFrequency() * mIncomeAmount) / 12; }
 
-    public String getIncomeAmountString() {return "$" + mIncomeAmount;    }
+    public ArrayList<DateAmountPair> getAllMonthlyIncomes() {
+        ArrayList<DateAmountPair> incomes = new ArrayList<>();
+        Date currentDate = new Date();
+        Date collectionDate = getFirstCollectionDateOfMonth(mIncomeFrequency, mIncomeCollectionDate, currentDate);
+
+        Log.d(TAG, "Last day of month: " + DateFormatter.returnLastDayOfMonth(currentDate));
+
+        while( collectionDate.before(Frequency.subtractFrequencyFromDate(mIncomeFrequency, DateFormatter.returnLastDayOfMonth(currentDate))) ) {
+            DateAmountPair pair = new DateAmountPair(collectionDate, mIncomeAmount);
+            incomes.add(pair);
+            collectionDate = Frequency.addFrequencyToDate(mIncomeFrequency, collectionDate);
+            Log.d(TAG, "Adding pair... Date = " + DateFormatter.returnSimpleDate(collectionDate) + ". Amount = " + mIncomeAmount);
+        }
+
+        return incomes;
+    }
+
+    public String getIncomeAmountString() {return "$" + mIncomeAmount; }
 
     public void setIncomeAmount(Double mIncomeAmount) {
         this.mIncomeAmount = mIncomeAmount;
@@ -97,14 +116,25 @@ public class Income {
         Date currentDate = new Date();
 
         Log.d(TAG, "Receiving date for: " + mIncomeTitle);
-        Log.d(TAG, "Current date: " + DateFormatter.returnSimpleDate(currentDate));
+        Log.d(TAG, "Current date: " + DateFormatter.returnSimpleDateTime(currentDate));
 
         while (incomeDate.before(currentDate)) {
-            Log.d(TAG, "Tested date: " + DateFormatter.returnSimpleDate(incomeDate));
+            Log.d(TAG, "Tested date: " + DateFormatter.returnSimpleDateTime(incomeDate));
             incomeDate = Frequency.addFrequencyToDate(frequency, incomeDate);
         }
 
         Log.d(TAG, "Returning date: " + DateFormatter.returnSimpleDate(incomeDate));
+
+        return incomeDate;
+    }
+
+    public Date getFirstCollectionDateOfMonth(Frequency frequency, Date incomeDate, Date monthDate) {
+
+        Date firstOfMoth = DateFormatter.setTimeToMidnight(DateFormatter.returnFirstDayOfMonth(monthDate));
+
+        while (incomeDate.after(firstOfMoth)) {
+            incomeDate = Frequency.subtractFrequencyFromDate(frequency, incomeDate);
+        }
 
         return incomeDate;
     }

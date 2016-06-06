@@ -1,4 +1,4 @@
-package com.projects.danieltaeschler.budgettracker;
+package com.projects.danieltaeschler.budgettracker.utilities;
 
 import java.text.DecimalFormat;
 

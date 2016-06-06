@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.budgettracker.expense.Expense;
 import com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.budgettracker.income.Income;
+import com.projects.danieltaeschler.budgettracker.utilities.BudgetTrackerJSONSerializer;
 
 import java.util.ArrayList;
 import java.util.UUID;

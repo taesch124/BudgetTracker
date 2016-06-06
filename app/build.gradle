@@ -5,11 +5,15 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.projects.danieltaeschler.budgettracker"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
     buildTypes {
         release {
@@ -20,9 +24,9 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:design:23.1.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
-    compile project(':GraphView')
+    //compile project(':GraphView')
 }

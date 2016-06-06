@@ -15,12 +15,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.projects.danieltaeschler.budgettracker.Budget;
-import com.projects.danieltaeschler.budgettracker.DecimalFormatter;
+import com.projects.danieltaeschler.budgettracker.utilities.DecimalFormatter;
 import com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.budgettracker.income.Income;
 import com.projects.danieltaeschler.budgettracker.R;
 import com.projects.danieltaeschler.budgettracker.utilities.DateFormatter;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.UUID;

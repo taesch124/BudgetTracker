@@ -2,7 +2,7 @@ package com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.
 
 import android.support.v4.app.Fragment;
 
-import com.projects.danieltaeschler.budgettracker.SingleFragmentActivity;
+import com.projects.danieltaeschler.budgettracker.utilities.SingleFragmentActivity;
 
 public class ExpenseActivity extends SingleFragmentActivity {
 

@@ -3,11 +3,13 @@ package com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.
 import android.util.Log;
 
 import com.projects.danieltaeschler.budgettracker.Frequency;
+import com.projects.danieltaeschler.budgettracker.utilities.DateAmountPair;
 import com.projects.danieltaeschler.budgettracker.utilities.DateFormatter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 import java.lang.Math;
@@ -76,7 +78,24 @@ public class Expense {
 
     public double getExpenseCost() { return mExpenseCost; }
 
-    public Double getExpenseMonthlyCost() { return (mExpenseFrequency.getYearlyFrequency() * mExpenseCost) / 12; }
+    public Double getMonthlyExpenseCost() { return (mExpenseFrequency.getYearlyFrequency() * mExpenseCost) / 12; }
+
+    public ArrayList<DateAmountPair> getAllMonthlyExpenses() {
+        ArrayList<DateAmountPair> expenses = new ArrayList<>();
+        Date currentDate = new Date();
+        Date collectionDate = getFirstExpenseDateOfMonth(mExpenseFrequency, mExpensePayDate, currentDate);
+
+        Log.d(TAG, "Last day of month: " + DateFormatter.returnLastDayOfMonth(currentDate));
+
+        while( collectionDate.before(DateFormatter.returnLastDayOfMonth(currentDate)) ) {
+            DateAmountPair pair = new DateAmountPair(collectionDate, mExpenseCost);
+            expenses.add(pair);
+            collectionDate = Frequency.addFrequencyToDate(mExpenseFrequency, collectionDate);
+            Log.d(TAG, "Adding pair... Date = " + DateFormatter.returnSimpleDate(collectionDate) + ". Amount = " + mExpenseCost);
+        }
+
+        return expenses;
+    }
 
     public String getExpenseCostString() {
         return "$" + mExpenseCost.toString();
@@ -98,6 +117,17 @@ public class Expense {
 
         while (expenseDate.before(currentDate)) {
             expenseDate = Frequency.addFrequencyToDate(frequency, expenseDate);
+        }
+
+        return expenseDate;
+    }
+
+    public Date getFirstExpenseDateOfMonth(Frequency frequency, Date expenseDate, Date monthDate) {
+
+        Date firstOfMoth = DateFormatter.setTimeToMidnight(DateFormatter.returnFirstDayOfMonth(monthDate));
+
+        while (expenseDate.after(firstOfMoth)) {
+            expenseDate = Frequency.subtractFrequencyFromDate(frequency, expenseDate);
         }
 
         return expenseDate;
