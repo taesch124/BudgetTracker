@@ -110,8 +110,9 @@ public class IncomeListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
+        mIncomes = Budget.get(getActivity()).getIncomes();
         mIncomeAdapter.notifyDataSetChanged();
-        Budget.get(getActivity()).saveIncomes();
+
     }
 
     @Override
@@ -172,7 +173,7 @@ public class IncomeListFragment extends ListFragment {
             case R.id.menu_item_delete_income:
                 Budget budget = Budget.get(getActivity());
                 budget.deleteIncome(income);
-                budget.saveIncomes();
+                mIncomes.remove(income);
                 mIncomeAdapter.notifyDataSetChanged();
                 return true;
         }
@@ -246,6 +247,7 @@ public class IncomeListFragment extends ListFragment {
                         for (int j = mIncomeAdapter.getCount() - 1; j >= 0; j--) {
                             if (listView.isItemChecked(j)) {
                                 budget.deleteIncome(mIncomeAdapter.getItem(j));
+                                mIncomes.remove(mIncomeAdapter.getItem(j));
                             }
                         }
                         budget.saveIncomes();

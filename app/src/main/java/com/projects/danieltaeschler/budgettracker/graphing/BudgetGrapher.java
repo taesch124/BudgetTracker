@@ -3,6 +3,7 @@ package com.projects.danieltaeschler.budgettracker.graphing;
 import android.content.Context;
 import android.util.Log;
 
+import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 import com.projects.danieltaeschler.budgettracker.Budget;
@@ -31,7 +32,7 @@ public class BudgetGrapher {
         mIncomes = Budget.get(mContext).getIncomes();
     }
 
-    public LineGraphSeries<DataPoint> createMonthlyBudgetReportLineGraph() {
+    public LineGraphSeries<DataPoint> createMonthlyBudgetReportLineGraphSeries() {
         ArrayList<DateAmountPair> incomeDateAmountPairs = new ArrayList<>();
         ArrayList<DateAmountPair> expenseDateAmountPairs = new ArrayList<>();
         Date currentDate = new Date();
@@ -41,23 +42,18 @@ public class BudgetGrapher {
 
         double totalAmount = 0;
 
-        //find all previous payments of the current month
+        //find all incomes/expenses of the current month
         for (Income income : mIncomes) {
             incomeDateAmountPairs.addAll(income.getAllMonthlyIncomes());
         }
-
-        Log.d(TAG, "income pair size: " + incomeDateAmountPairs.size());
 
         for (Expense expense : mExpenses) {
             expenseDateAmountPairs.addAll(expense.getAllMonthlyExpenses());
         }
 
-        Log.d(TAG, "expense pair size: " + expenseDateAmountPairs.size());
-
         DataPoint[] dataPoints = new DataPoint[monthLength];
 
-        for (int i = 0; i < monthLength ; i++) {
-            calendar.set(Calendar.DAY_OF_MONTH, i+1);
+        for (int i = 1; i <= monthLength ; i++) {
             Log.d(TAG, "Testing date: " + DateFormatter.returnSimpleDateTime(calendar.getTime()));
 
             for (DateAmountPair incomePair : incomeDateAmountPairs) {
@@ -74,15 +70,24 @@ public class BudgetGrapher {
                 }
             }
 
-            dataPoints[i] = new DataPoint(i+1, totalAmount);
-        }
-
-        for (int i = 0; i < dataPoints.length; i++) {
-            Log.d(TAG, "(" + dataPoints[i].getX() + ", " + dataPoints[i].getY() + ")");
+            dataPoints[i-1] = new DataPoint(calendar.getTime(), totalAmount);
+            calendar.set(Calendar.DAY_OF_MONTH, i);
         }
 
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>(dataPoints);
         return series;
+    }
+
+    public GraphView createMonthlyBudgetReportLineGraph() {
+        GraphView monthlyGraphView = new GraphView(mContext);
+        Date currentDate = new Date();
+
+        monthlyGraphView.addSeries(createMonthlyBudgetReportLineGraphSeries());
+        monthlyGraphView.setTitle(DateFormatter.getMonthNameString(currentDate) + " Budget Outlook");
+        monthlyGraphView.getViewport().setMinX(1);
+        monthlyGraphView.getViewport().setMaxX(DateFormatter.returnIntLastDayOfMonth(currentDate));
+
+        return monthlyGraphView;
     }
 
 

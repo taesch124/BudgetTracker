@@ -114,6 +114,7 @@ public class ExpenseFragment extends Fragment {
                 Budget budget = Budget.get(getActivity());
                 budget.deleteExpense(mExpense);
                 getActivity().finish();
+                return true;
             default:
                 return false;
         }

@@ -110,8 +110,8 @@ public class ExpenseListFragment extends ListFragment{
     @Override
     public void onResume() {
         super.onResume();
+        mExpenses = Budget.get(getActivity()).getExpenses();
         mExpenseAdapter.notifyDataSetChanged();
-        Budget.get(getActivity()).saveExpenses();
     }
 
     @Override
@@ -175,7 +175,7 @@ public class ExpenseListFragment extends ListFragment{
             case R.id.menu_item_delete_expense:
                 Budget budget = Budget.get(getActivity());
                 budget.get(getActivity()).deleteExpense(expense);
-                budget.get(getActivity()).saveExpenses();
+                mExpenses.remove(expense);
                 mExpenseAdapter.notifyDataSetChanged();
                 return true;
         }
@@ -249,6 +249,7 @@ public class ExpenseListFragment extends ListFragment{
                         for (int j = mExpenseAdapter.getCount() - 1; j >= 0; j--) {
                             if (listView.isItemChecked(j)) {
                                 budget.deleteExpense(mExpenseAdapter.getItem(j));
+                                mExpenses.remove(mExpenseAdapter.getItem(j));
                             }
                         }
                         budget.saveExpenses();

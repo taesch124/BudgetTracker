@@ -102,6 +102,7 @@ public class IncomeFragment extends Fragment {
                 Budget budget = Budget.get(getActivity());
                 budget.deleteIncome(mIncome);
                 getActivity().finish();
+                return true;
             default:
                 return false;
         }

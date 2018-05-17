@@ -5,9 +5,14 @@ import android.util.Log;
 
 import com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.budgettracker.expense.Expense;
 import com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.budgettracker.income.Income;
+import com.projects.danieltaeschler.budgettracker.data.BudgetDatabase;
 import com.projects.danieltaeschler.budgettracker.utilities.BudgetTrackerJSONSerializer;
+import com.projects.danieltaeschler.budgettracker.utilities.DateAmountPair;
+import com.projects.danieltaeschler.budgettracker.utilities.DateFormatter;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -56,6 +61,34 @@ public class Budget {
         return incomeTotal;
     }
 
+    public double getCurrentMonthIncome() {
+        ArrayList<DateAmountPair> incomeDateAmountPairs = new ArrayList<>();
+        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(DateFormatter.setTimeToMidnight(currentDate));
+        int monthLength = DateFormatter.returnIntLastDayOfMonth(currentDate);
+
+        double totalAmount = 0;
+
+        //find all previous payments of the current month
+        for (Income income : mIncomes) {
+            incomeDateAmountPairs.addAll(income.getAllMonthlyIncomes());
+        }
+
+        for (int i = 0; i < monthLength ; i++) {
+            calendar.set(Calendar.DAY_OF_MONTH, i+1);
+            Log.d(TAG, "Testing date: " + DateFormatter.returnSimpleDateTime(calendar.getTime()));
+
+            for (DateAmountPair incomePair : incomeDateAmountPairs) {
+                if ( DateFormatter.setTimeToMidnight(incomePair.getDate()).equals(calendar.getTime()) ) {
+                    totalAmount += incomePair.getAmount();
+                }
+            }
+        }
+
+        return totalAmount;
+    }
+
     public double getTotalExpense() {
         double expenseTotal = 0;
 
@@ -67,6 +100,34 @@ public class Budget {
         return expenseTotal;
     }
 
+    public double getCurrentMonthExpense() {
+        ArrayList<DateAmountPair> expenseDateAmountPairs = new ArrayList<>();
+        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(DateFormatter.setTimeToMidnight(currentDate));
+        int monthLength = DateFormatter.returnIntLastDayOfMonth(currentDate);
+
+        double totalAmount = 0;
+
+        for (Expense expense : mExpenses) {
+            expenseDateAmountPairs.addAll(expense.getAllMonthlyExpenses());
+        }
+
+        for (int i = 0; i < monthLength ; i++) {
+            calendar.set(Calendar.DAY_OF_MONTH, i+1);
+            Log.d(TAG, "Testing date: " + DateFormatter.returnSimpleDateTime(calendar.getTime()));
+
+            for (DateAmountPair expensePair : expenseDateAmountPairs) {
+                if ( DateFormatter.setTimeToMidnight(expensePair.getDate()).equals(calendar.getTime()) ) {
+                    totalAmount += expensePair.getAmount();
+                    Log.d(TAG, "Subtracting amount: " + expensePair.getAmount() + " for date " + expensePair.getDate());
+                }
+            }
+        }
+
+        return totalAmount;
+    }
+
     public static Budget get(Context c) {
         if (sBudget == null) {
             return sBudget = new Budget(c.getApplicationContext());
@@ -76,26 +137,36 @@ public class Budget {
     }
 
     public ArrayList<Income> getIncomes() {
-        return mIncomes;
+        return BudgetDatabase.getIncomes();
+        //return mIncomes;
     }
     public ArrayList<Expense> getExpenses() {
-        return mExpenses;
+        return BudgetDatabase.getExpenses();
+        //return mExpenses;
     }
 
+
     public Income getIncome(UUID incomeId) {
+        return BudgetDatabase.getIncome(incomeId);
+        /*
         for(Income i : mIncomes) {
             if(i.getIncomeId().equals(incomeId)) {
                 return i;
             }
         }
         return null;
+        */
     }
 
     public void deleteIncome(Income income) {
-        mIncomes.remove(income);
+        //mIncomes.remove(income);
+        BudgetDatabase.deleteItem(income.getIncomeId());
     }
 
-    public void addIncome (Income income) { mIncomes.add(income); }
+    public void addIncome (Income income) {
+        //mIncomes.add(income);
+        BudgetDatabase.addNewItem(income.getIncomeId(), income.getIncomeCollectionDate(), income.getIncomeFrequencyInt(), false);
+    }
 
     public boolean saveIncomes() {
         try {
@@ -108,20 +179,35 @@ public class Budget {
         }
     }
 
+    public void saveIncome(Income income) {
+        BudgetDatabase.updateItem(income.getIncomeId(),
+                income.getIncomeTitle(),
+                income.getIncomeAmount(),
+                income.getIncomeCollectionDate(),
+                income.getIncomeFrequency());
+    }
+
     public Expense getExpense (UUID expenseId) {
+        return BudgetDatabase.getExpense(expenseId);
+        /*
         for(Expense e: mExpenses) {
             if(e.getExpenseId().equals(expenseId)) {
                 return e;
             }
         }
         return null;
+        */
     }
 
     public void deleteExpense (Expense expense) {
-        mExpenses.remove(expense);
+       //mExpenses.remove(expense);
+        BudgetDatabase.deleteItem(expense.getExpenseId());
     }
 
-    public void addExpense (Expense expense) { mExpenses.add(expense); }
+    public void addExpense (Expense expense) {
+        //mExpenses.add(expense)
+        BudgetDatabase.addNewItem(expense.getExpenseId(), expense.getExpensePayDate(), expense.getExpenseFrequencyInt(), true);
+    }
 
     public boolean saveExpenses() {
         try {
@@ -134,4 +220,33 @@ public class Budget {
         }
     }
 
+    public void saveExpense(Expense expense) {
+        BudgetDatabase.updateItem(expense.getExpenseId(),
+                expense.getExpenseTitle(),
+                expense.getExpenseCost(),
+                expense.getExpensePayDate(),
+                expense.getExpenseFrequency());
+    }
+
+    public void openDatabase() {
+        BudgetDatabase.createDatabase(mAppContext);
+    }
+
+    public void loadBudgetToDatabase() {
+        BudgetDatabase.createDatabase(mAppContext);
+        BudgetDatabase.cleanDatabase();
+        for (Expense e : mExpenses ) {
+            BudgetDatabase.addExpense(e.getExpenseId(), e.getExpenseTitle(), e.getExpenseCost(), e.getNextExpensePayDate(e.getExpenseFrequency(), new Date()), e.getExpenseFrequency());
+        }
+
+        for (Income i : mIncomes) {
+            BudgetDatabase.addIncome(i.getIncomeId(), i.getIncomeTitle(), i.getIncomeAmount(), i.getNextIncomeCollectionDate(i.getIncomeFrequency(), new Date()), i.getIncomeFrequency());
+        }
+
+
+    }
+
+    public void logBudgetFromDatabase() {
+        BudgetDatabase.logCurrentBudget();
+    }
 }

@@ -45,6 +45,14 @@ public class Income {
         mIncomeAmount = amount;
     }
 
+    public Income(String id,String title,Double cost, Date payDate, int frequency) {
+        mIncomeId = UUID.fromString(id);
+        mIncomeTitle = title;
+        mIncomeAmount = cost;
+        mIncomeFrequency = Frequency.valueOf(frequency);
+        mIncomeCollectionDate = payDate;
+    }
+
     public Income(JSONObject json) throws JSONException {
         mIncomeId = UUID.fromString(json.getString(JSON_ID));
         mIncomeTitle = json.getString(JSON_TITLE);
@@ -85,8 +93,6 @@ public class Income {
         return mIncomeAmount;
     }
 
-    public Double getMonthlyIncomeAmount() { return (mIncomeFrequency.getYearlyFrequency() * mIncomeAmount) / 12; }
-
     public ArrayList<DateAmountPair> getAllMonthlyIncomes() {
         ArrayList<DateAmountPair> incomes = new ArrayList<>();
         Date currentDate = new Date();
@@ -94,7 +100,7 @@ public class Income {
 
         Log.d(TAG, "Last day of month: " + DateFormatter.returnLastDayOfMonth(currentDate));
 
-        while( collectionDate.before(Frequency.subtractFrequencyFromDate(mIncomeFrequency, DateFormatter.returnLastDayOfMonth(currentDate))) ) {
+        while( collectionDate.before(DateFormatter.returnLastDayOfMonth(currentDate)) ) {
             DateAmountPair pair = new DateAmountPair(collectionDate, mIncomeAmount);
             incomes.add(pair);
             collectionDate = Frequency.addFrequencyToDate(mIncomeFrequency, collectionDate);

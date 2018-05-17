@@ -15,6 +15,7 @@ public class DateFormatter extends SimpleDateFormat{
     private static SimpleDateFormat longDateFormatter = new SimpleDateFormat("MMMM d, yyyy");
     private static SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/dd/yyyy");
     private static SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("h:mm a MM/dd/yyyy");
+    private static SimpleDateFormat monthString = new SimpleDateFormat("MMMM");
 
     public static String returnSimpleDate(Date date) {
         String dateString = dateFormatter.format(date);
@@ -26,6 +27,12 @@ public class DateFormatter extends SimpleDateFormat{
         String dateString = longDateFormatter.format(date);
 
         return dateString;
+    }
+
+    public static String getMonthNameString(Date date) {
+        String monthNameString = monthString.format(date);
+
+        return monthNameString;
     }
 
     public static Date parseDateFromString(Date prevDate, String string) {

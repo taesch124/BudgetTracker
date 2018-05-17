@@ -88,12 +88,12 @@ public class ExpenseEditFragment extends Fragment {
         }
 
         mExpensePayDateEdit = (Button)v.findViewById(R.id.expense_pay_date_edit);
-        updateDate(mExpense.getExpensePayDate());
+        updateDate(new Date());
         mExpensePayDateEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mExpense.getExpensePayDate());
+                DatePickerFragment dialog = DatePickerFragment.newInstance(new Date());
                 dialog.setTargetFragment(ExpenseEditFragment.this, REQUEST_DATE);
                 dialog.show(fm, DIALOG_DATE);
             }
@@ -144,7 +144,8 @@ public class ExpenseEditFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Budget.get(getActivity()).saveExpenses();
+        Budget.get(getActivity()).saveExpense(mExpense);
+        //Budget.get(getActivity()).saveExpenses();
     }
 
     @Override

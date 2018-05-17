@@ -92,7 +92,7 @@ public class IncomeEditFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mIncome.getIncomeCollectionDate());
+                DatePickerFragment dialog = DatePickerFragment.newInstance(new Date());
                 dialog.setTargetFragment(IncomeEditFragment.this, REQUEST_DATE);
                 dialog.show(fm, DIALOG_DATE);
             }
@@ -140,7 +140,8 @@ public class IncomeEditFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Budget.get(getActivity()).saveIncomes();
+        Budget.get(getActivity()).saveIncome(mIncome);
+        //Budget.get(getActivity()).saveIncomes();
     }
 
     @Override

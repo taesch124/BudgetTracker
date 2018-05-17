@@ -3,6 +3,7 @@ package com.projects.danieltaeschler.budgettracker;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.Button;
 import com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.budgettracker.expense.ExpenseListActivity;
 import com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.budgettracker.income.IncomeListActivity;
 import com.projects.danieltaeschler.budgettracker.com.projects.danieltaeschler.budgettracker.monthlyreport.BudgetReportActivity;
+import com.projects.danieltaeschler.budgettracker.data.BudgetDatabase;
 
 /**
  * Created by Daniel Taeschler on 12/18/2015.
@@ -24,7 +26,9 @@ public class MenuFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Budget.get(getActivity()).openDatabase();
+        BudgetDatabase.cleanDatabase();
+        Budget.get(getActivity()).logBudgetFromDatabase();
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -41,6 +41,14 @@ public class Expense {
         mExpenseFrequency = Frequency.ANNUALLY;
     }
 
+    public Expense(String id,String title,Double cost, Date payDate, int frequency) {
+        mExpenseId = UUID.fromString(id);
+        mExpenseTitle = title;
+        mExpenseCost = cost;
+        mExpenseFrequency = Frequency.valueOf(frequency);
+        mExpensePayDate = payDate;
+    }
+
     public Expense(JSONObject json) throws JSONException {
         mExpenseId = UUID.fromString(json.getString(JSON_ID));
         mExpenseTitle = json.getString(JSON_TITLE);
